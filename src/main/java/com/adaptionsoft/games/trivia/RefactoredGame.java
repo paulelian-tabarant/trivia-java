@@ -5,8 +5,11 @@ import com.adaptionsoft.games.trivia.runner.Game;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import static com.adaptionsoft.games.trivia.Category.*;
+
 public class RefactoredGame implements Game {
     public static final int PLACES_SIZE = 11;
+    private final Category[] placesCategories = {POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK};
     ArrayList<String> players = new ArrayList<>();
     int[] places = new int[6];
     int[] purses = new int[6];
@@ -24,16 +27,16 @@ public class RefactoredGame implements Game {
 
     public RefactoredGame(Logger logger) {
         for (int questionIndex = 0; questionIndex < 50; questionIndex++) {
-            popQuestions.addLast(createQuestion("Pop", questionIndex));
-            scienceQuestions.addLast(createQuestion("Science", questionIndex));
-            sportsQuestions.addLast(createQuestion("Sports", questionIndex));
-            rockQuestions.addLast(createQuestion("Rock", questionIndex));
+            popQuestions.addLast(createQuestion(POP, questionIndex));
+            scienceQuestions.addLast(createQuestion(SCIENCE, questionIndex));
+            sportsQuestions.addLast(createQuestion(SPORTS, questionIndex));
+            rockQuestions.addLast(createQuestion(ROCK, questionIndex));
         }
 
         this.logger = logger;
     }
 
-    public String createQuestion(String category, int index) {
+    public String createQuestion(Category category, int index) {
         return category + " Question " + index;
     }
 
@@ -88,67 +91,47 @@ public class RefactoredGame implements Game {
     }
 
     private void askQuestion() {
-        if (currentCategory().equals("Pop"))
+        if (currentCategory().equals(POP))
             logger.log((String) popQuestions.removeFirst());
-        if (currentCategory().equals("Science"))
+        if (currentCategory().equals(SCIENCE))
             logger.log((String) scienceQuestions.removeFirst());
-        if (currentCategory().equals("Sports"))
+        if (currentCategory().equals(SPORTS))
             logger.log((String) sportsQuestions.removeFirst());
-        if (currentCategory().equals("Rock"))
+        if (currentCategory().equals(ROCK))
             logger.log((String) rockQuestions.removeFirst());
     }
 
 
-    private String currentCategory() {
-        if (places[currentPlayerIndex] == 0) return "Pop";
-        if (places[currentPlayerIndex] == 4) return "Pop";
-        if (places[currentPlayerIndex] == 8) return "Pop";
-        if (places[currentPlayerIndex] == 1) return "Science";
-        if (places[currentPlayerIndex] == 5) return "Science";
-        if (places[currentPlayerIndex] == 9) return "Science";
-        if (places[currentPlayerIndex] == 2) return "Sports";
-        if (places[currentPlayerIndex] == 6) return "Sports";
-        if (places[currentPlayerIndex] == 10) return "Sports";
-        return "Rock";
+    private Category currentCategory() {
+        int playerPlace = places[currentPlayerIndex];
+        return placesCategories[playerPlace];
     }
 
     public boolean wasCorrectlyAnswered() {
-        if (inPenaltyBox[currentPlayerIndex]) {
-            if (isGettingOutOfPenaltyBox) {
-                logger.log("Answer was correct!!!!");
-                purses[currentPlayerIndex]++;
-                logger.log(players.get(currentPlayerIndex)
-                        + " now has "
-                        + purses[currentPlayerIndex]
-                        + " Gold Coins.");
-
-                boolean winner = didPlayerWin();
-                currentPlayerIndex++;
-                if (currentPlayerIndex == players.size()) currentPlayerIndex = 0;
-
-                return winner;
-            } else {
-                currentPlayerIndex++;
-                if (currentPlayerIndex == players.size()) currentPlayerIndex = 0;
-                return true;
-            }
-
-
-        } else {
-
-            logger.log("Answer was corrent!!!!");
-            purses[currentPlayerIndex]++;
-            logger.log(players.get(currentPlayerIndex)
-                    + " now has "
-                    + purses[currentPlayerIndex]
-                    + " Gold Coins.");
-
-            boolean winner = didPlayerWin();
-            currentPlayerIndex++;
-            if (currentPlayerIndex == players.size()) currentPlayerIndex = 0;
-
-            return winner;
+        if (inPenaltyBox[currentPlayerIndex] && !isGettingOutOfPenaltyBox) {
+            movePlayerToNextPlace();
+            return true;
         }
+
+        if (inPenaltyBox[currentPlayerIndex])
+            logger.log("Answer was correct!!!!");
+        else
+            logger.log("Answer was corrent!!!!");
+
+        purses[currentPlayerIndex]++;
+        logger.log(players.get(currentPlayerIndex)
+                + " now has "
+                + purses[currentPlayerIndex]
+                + " Gold Coins.");
+
+        movePlayerToNextPlace();
+
+        return didPlayerWin();
+    }
+
+    private void movePlayerToNextPlace() {
+        currentPlayerIndex++;
+        if (currentPlayerIndex == players.size()) currentPlayerIndex = 0;
     }
 
     public boolean wrongAnswer() {
@@ -156,8 +139,7 @@ public class RefactoredGame implements Game {
         logger.log(players.get(currentPlayerIndex) + " was sent to the penalty box");
         inPenaltyBox[currentPlayerIndex] = true;
 
-        currentPlayerIndex++;
-        if (currentPlayerIndex == players.size()) currentPlayerIndex = 0;
+        movePlayerToNextPlace();
         return true;
     }
 

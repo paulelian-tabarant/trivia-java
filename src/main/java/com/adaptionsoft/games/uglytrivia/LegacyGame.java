@@ -1,9 +1,13 @@
 package com.adaptionsoft.games.uglytrivia;
 
+import com.adaptionsoft.games.trivia.Logger;
+import com.adaptionsoft.games.trivia.SystemLogger;
+import com.adaptionsoft.games.trivia.runner.Game;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-public class Game {
+public class LegacyGame implements Game {
     ArrayList players = new ArrayList();
     int[] places = new int[6];
     int[] purses  = new int[6];
@@ -19,7 +23,7 @@ public class Game {
 
 	private final Logger logger;
 
-	public  Game(Logger logger){
+	public LegacyGame(Logger logger){
 		for (int i = 0; i < 50; i++) {
 			popQuestions.addLast("Pop Question " + i);
 			scienceQuestions.addLast(("Science Question " + i));
@@ -30,7 +34,7 @@ public class Game {
 		this.logger = logger;
 	}
 
-	public  Game(){
+	public LegacyGame(){
     	for (int i = 0; i < 50; i++) {
 			popQuestions.addLast("Pop Question " + i);
 			scienceQuestions.addLast(("Science Question " + i));

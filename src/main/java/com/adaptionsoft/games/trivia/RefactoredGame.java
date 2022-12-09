@@ -22,19 +22,17 @@ public class RefactoredGame implements Game {
 	private final Logger logger;
 
 	public RefactoredGame(Logger logger){
-		for (int i = 0; i < 50; i++) {
-			popQuestions.addLast("Pop Question " + i);
-			scienceQuestions.addLast(("Science Question " + i));
-			sportsQuestions.addLast(("Sports Question " + i));
-			rockQuestions.addLast(createRockQuestion(i));
+		for (int questionIndex = 0; questionIndex < 50; questionIndex++) {
+			popQuestions.addLast(createQuestion("Pop", questionIndex));
+			scienceQuestions.addLast(createQuestion("Science", questionIndex));
+			sportsQuestions.addLast(createQuestion("Sports", questionIndex));
+			rockQuestions.addLast(createQuestion("Rock", questionIndex));
 		}
 
 		this.logger = logger;
 	}
 
-	public String createRockQuestion(int index){
-		return "Rock Question " + index;
-	}
+	public String createQuestion(String category, int index) { return category + " Question " + index; }
 
 	public boolean isPlayable() {
 		return (howManyPlayers() >= 2);

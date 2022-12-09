@@ -9,6 +9,7 @@ import static com.adaptionsoft.games.trivia.Category.*;
 
 public class RefactoredGame implements Game {
     public static final int PLACES_SIZE = 11;
+    public static final int QUESTIONS_PER_CATEGORY = 50;
     private final Category[] placesCategories = {POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK};
     ArrayList<String> players = new ArrayList<>();
     int[] places = new int[6];
@@ -26,7 +27,7 @@ public class RefactoredGame implements Game {
     private final Logger logger;
 
     public RefactoredGame(Logger logger) {
-        for (int questionIndex = 0; questionIndex < 50; questionIndex++) {
+        for (int questionIndex = 0; questionIndex < QUESTIONS_PER_CATEGORY; questionIndex++) {
             popQuestions.addLast(createQuestion(POP, questionIndex));
             scienceQuestions.addLast(createQuestion(SCIENCE, questionIndex));
             sportsQuestions.addLast(createQuestion(SPORTS, questionIndex));
@@ -76,7 +77,7 @@ public class RefactoredGame implements Game {
         logger.log(players.get(currentPlayerIndex)
                 + "'s new location is "
                 + places[currentPlayerIndex]);
-        logger.log("The category is " + currentCategory());
+        logger.log("The category is " + getCurrentCategory());
 
         askQuestion();
     }
@@ -91,25 +92,25 @@ public class RefactoredGame implements Game {
     }
 
     private void askQuestion() {
-        if (currentCategory().equals(POP))
-            logger.log((String) popQuestions.removeFirst());
-        if (currentCategory().equals(SCIENCE))
-            logger.log((String) scienceQuestions.removeFirst());
-        if (currentCategory().equals(SPORTS))
-            logger.log((String) sportsQuestions.removeFirst());
-        if (currentCategory().equals(ROCK))
-            logger.log((String) rockQuestions.removeFirst());
+        if (getCurrentCategory().equals(POP))
+            logger.log(popQuestions.removeFirst());
+        if (getCurrentCategory().equals(SCIENCE))
+            logger.log(scienceQuestions.removeFirst());
+        if (getCurrentCategory().equals(SPORTS))
+            logger.log(sportsQuestions.removeFirst());
+        if (getCurrentCategory().equals(ROCK))
+            logger.log(rockQuestions.removeFirst());
     }
 
 
-    private Category currentCategory() {
+    private Category getCurrentCategory() {
         int playerPlace = places[currentPlayerIndex];
         return placesCategories[playerPlace];
     }
 
     public boolean wasCorrectlyAnswered() {
         if (inPenaltyBox[currentPlayerIndex] && !isGettingOutOfPenaltyBox) {
-            movePlayerToNextPlace();
+            nextPlayer();
             return true;
         }
 
@@ -124,25 +125,24 @@ public class RefactoredGame implements Game {
                 + purses[currentPlayerIndex]
                 + " Gold Coins.");
 
-        movePlayerToNextPlace();
+        nextPlayer();
 
         return didPlayerWin();
     }
 
-    private void movePlayerToNextPlace() {
-        currentPlayerIndex++;
-        if (currentPlayerIndex == players.size()) currentPlayerIndex = 0;
-    }
 
     public boolean wrongAnswer() {
         logger.log("Question was incorrectly answered");
         logger.log(players.get(currentPlayerIndex) + " was sent to the penalty box");
         inPenaltyBox[currentPlayerIndex] = true;
 
-        movePlayerToNextPlace();
+        nextPlayer();
         return true;
     }
 
+    private void nextPlayer() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % playersNumber();
+    }
 
     private boolean didPlayerWin() {
         return !(purses[currentPlayerIndex] == 6);

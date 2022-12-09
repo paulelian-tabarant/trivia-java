@@ -58,36 +58,33 @@ public class RefactoredGame implements Game {
         logger.log("They have rolled a " + result);
 
         if (inPenaltyBox[currentPlayerIndex]) {
-            if (result % 2 != 0) {
+            if (canPlayerGetOutOfPenaltyBox(result)) {
                 isGettingOutOfPenaltyBox = true;
-
                 logger.log(players.get(currentPlayerIndex) + " is getting out of the penalty box");
-
-                places[currentPlayerIndex] += result;
-                if (places[currentPlayerIndex] > PLACES_SIZE) places[currentPlayerIndex] -= (PLACES_SIZE + 1);
-
-                logger.log(players.get(currentPlayerIndex)
-                        + "'s new location is "
-                        + places[currentPlayerIndex]);
-                logger.log("The category is " + currentCategory());
-                askQuestion();
             } else {
                 logger.log(players.get(currentPlayerIndex) + " is not getting out of the penalty box");
                 isGettingOutOfPenaltyBox = false;
+                return;
             }
-
-        } else {
-
-            places[currentPlayerIndex] = places[currentPlayerIndex] + result;
-            if (places[currentPlayerIndex] > 11) places[currentPlayerIndex] = places[currentPlayerIndex] - 12;
-
-            logger.log(players.get(currentPlayerIndex)
-                    + "'s new location is "
-                    + places[currentPlayerIndex]);
-            logger.log("The category is " + currentCategory());
-            askQuestion();
         }
 
+        movePlayer(result);
+
+        logger.log(players.get(currentPlayerIndex)
+                + "'s new location is "
+                + places[currentPlayerIndex]);
+        logger.log("The category is " + currentCategory());
+
+        askQuestion();
+    }
+
+    private boolean canPlayerGetOutOfPenaltyBox(int result) {
+        return result % 2 != 0;
+    }
+
+    private void movePlayer(int result) {
+        places[currentPlayerIndex] += result;
+        if (places[currentPlayerIndex] > PLACES_SIZE) places[currentPlayerIndex] -= (PLACES_SIZE + 1);
     }
 
     private void askQuestion() {

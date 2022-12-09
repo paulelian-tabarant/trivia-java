@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SomeTest {
+public class RefactoredTriviaTest {
 
     @Test
     public void true_is_true() throws Exception {

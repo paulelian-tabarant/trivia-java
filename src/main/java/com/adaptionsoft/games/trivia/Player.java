@@ -21,4 +21,6 @@ public class Player {
 
     public boolean isInPenaltyBox() { return isInPenaltyBox; }
     public void moveToPenaltyBox() { isInPenaltyBox = true; }
+
+    public boolean didWin() { return purse != 6; }
 }

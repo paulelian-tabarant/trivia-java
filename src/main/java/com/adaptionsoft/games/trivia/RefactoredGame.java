@@ -8,7 +8,6 @@ import java.util.LinkedList;
 import static com.adaptionsoft.games.trivia.Category.*;
 
 public class RefactoredGame implements Game {
-    // TODO: set to 12 and adapt code
     public static final int PLACES_SIZE = 12;
     public static final int QUESTIONS_PER_CATEGORY = 50;
     private final Category[] placesCategories = {POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK};
@@ -47,10 +46,6 @@ public class RefactoredGame implements Game {
         return true;
     }
 
-    private int playersNumber() {
-        return players.size();
-    }
-
     public void roll(int result) {
         logger.log(getCurrentPlayer() + " is the current player");
         logger.log("They have rolled a " + result);
@@ -74,6 +69,33 @@ public class RefactoredGame implements Game {
         askQuestion();
     }
 
+    public boolean wasCorrectlyAnswered() {
+        if (getCurrentPlayer().isInPenaltyBox() && !isGettingOutOfPenaltyBox) {
+            nextPlayer();
+            return true;
+        }
+
+        if (getCurrentPlayer().isInPenaltyBox())
+            logger.log("Answer was correct!!!!");
+        else
+            logger.log("Answer was corrent!!!!");
+
+        getCurrentPlayer().incrementPurse();
+        logger.log(getCurrentPlayer() + " now has " + getCurrentPlayer().getPurse() + " Gold Coins.");
+
+        nextPlayer();
+        return getCurrentPlayer().didWin();
+    }
+
+    public boolean wrongAnswer() {
+        logger.log("Question was incorrectly answered");
+        logger.log(getCurrentPlayer() + " was sent to the penalty box");
+        getCurrentPlayer().moveToPenaltyBox();
+
+        nextPlayer();
+        return true;
+    }
+
     private boolean canPlayerGetOutOfPenaltyBox(int result) {
         return result % 2 != 0;
     }
@@ -93,50 +115,20 @@ public class RefactoredGame implements Game {
             logger.log(rockQuestions.removeFirst());
     }
 
-
     private Category getCurrentCategory() {
         int playerPlace = getCurrentPlayer().getPlace();
         return placesCategories[playerPlace];
     }
 
-    public boolean wasCorrectlyAnswered() {
-        if (getCurrentPlayer().isInPenaltyBox() && !isGettingOutOfPenaltyBox) {
-            nextPlayer();
-            return true;
-        }
-
-        if (getCurrentPlayer().isInPenaltyBox())
-            logger.log("Answer was correct!!!!");
-        else
-            logger.log("Answer was corrent!!!!");
-
-        getCurrentPlayer().incrementPurse();
-        logger.log(getCurrentPlayer() + " now has " + getCurrentPlayer().getPurse() + " Gold Coins.");
-
-        nextPlayer();
-
-        return didPlayerWin();
+    private int playersNumber() {
+        return players.size();
     }
 
     private Player getCurrentPlayer() {
         return players.get(currentPlayerIndex);
     }
 
-
-    public boolean wrongAnswer() {
-        logger.log("Question was incorrectly answered");
-        logger.log(getCurrentPlayer() + " was sent to the penalty box");
-        getCurrentPlayer().moveToPenaltyBox();
-
-        nextPlayer();
-        return true;
-    }
-
     private void nextPlayer() {
         currentPlayerIndex = (currentPlayerIndex + 1) % playersNumber();
-    }
-
-    private boolean didPlayerWin() {
-        return !(getCurrentPlayer().getPurse() == 6);
     }
 }

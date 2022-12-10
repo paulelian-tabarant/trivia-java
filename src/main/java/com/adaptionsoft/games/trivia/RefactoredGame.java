@@ -11,12 +11,14 @@ import static com.adaptionsoft.games.trivia.Category.*;
 
 public class RefactoredGame implements Game {
     public static final int PLACES_SIZE = 12;
-
     private static final int QUESTIONS_PER_CATEGORY = 50;
 
-    private final Category[] placesCategories = {POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK};
+    private final Category[] categoriesByPlace = {
+            POP, SCIENCE, SPORTS, ROCK,
+            POP, SCIENCE, SPORTS, ROCK,
+            POP, SCIENCE, SPORTS, ROCK
+    };
     ArrayList<Player> players = new ArrayList<>();
-
     Map<Category, LinkedList<Question>> questionDeck = new HashMap<>();
 
     int currentPlayerIndex = 0;
@@ -25,10 +27,10 @@ public class RefactoredGame implements Game {
     private final Logger logger;
 
     public RefactoredGame(Logger logger) {
-        for (Category category : Category.values())
+        for (Category category : Category.values()) {
             questionDeck.put(category, new LinkedList<>());
-        for (int questionIndex = 0; questionIndex < QUESTIONS_PER_CATEGORY; questionIndex++) {
-            for (Category category : Category.values()) {
+
+            for (int questionIndex = 0; questionIndex < QUESTIONS_PER_CATEGORY; questionIndex++) {
                 questionDeck.get(category).add(new Question(category, questionIndex));
             }
         }
@@ -68,15 +70,17 @@ public class RefactoredGame implements Game {
     }
 
     public boolean rightAnswer() {
-        if (getCurrentPlayer().isInPenaltyBox() && !isGettingOutOfPenaltyBox) {
-            setTurnToNextPlayer();
-            return true;
-        }
+        if (getCurrentPlayer().isInPenaltyBox()) {
+            if (!isGettingOutOfPenaltyBox) {
+                setTurnToNextPlayer();
+                return true;
+            }
 
-        if (getCurrentPlayer().isInPenaltyBox())
             logger.log("Answer was correct!!!!");
-        else
+        }
+        else {
             logger.log("Answer was corrent!!!!");
+        }
 
         getCurrentPlayer().incrementPurse();
         logger.log(getCurrentPlayer() + " now has " + getCurrentPlayer().getPurse() + " Gold Coins.");
@@ -109,7 +113,7 @@ public class RefactoredGame implements Game {
 
     private Category getCurrentCategory() {
         int playerPlace = getCurrentPlayer().getPlace();
-        return placesCategories[playerPlace];
+        return categoriesByPlace[playerPlace];
     }
 
     private int countPlayers() {

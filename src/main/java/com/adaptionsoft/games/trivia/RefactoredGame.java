@@ -11,8 +11,7 @@ public class RefactoredGame implements Game {
     public static final int PLACES_SIZE = 11;
     public static final int QUESTIONS_PER_CATEGORY = 50;
     private final Category[] placesCategories = {POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK};
-    ArrayList<String> players = new ArrayList<>();
-    int[] places = new int[6];
+    ArrayList<Player> players = new ArrayList<Player>();
     int[] purses = new int[6];
     boolean[] inPenaltyBox = new boolean[6];
 
@@ -41,10 +40,8 @@ public class RefactoredGame implements Game {
         return category + " Question " + index;
     }
 
-    // TODO: create a Player object
     public boolean add(String playerName) {
-        players.add(playerName);
-        places[playersNumber()] = 0;
+        players.add(new Player(playerName));
         purses[playersNumber()] = 0;
         inPenaltyBox[playersNumber()] = false;
 
@@ -76,7 +73,7 @@ public class RefactoredGame implements Game {
 
         logger.log(players.get(currentPlayerIndex)
                 + "'s new location is "
-                + places[currentPlayerIndex]);
+                + players.get(currentPlayerIndex).getPlace());
         logger.log("The category is " + getCurrentCategory());
 
         askQuestion();
@@ -87,8 +84,9 @@ public class RefactoredGame implements Game {
     }
 
     private void movePlayer(int result) {
-        places[currentPlayerIndex] += result;
-        if (places[currentPlayerIndex] > PLACES_SIZE) places[currentPlayerIndex] -= (PLACES_SIZE + 1);
+        int newPlace = players.get(currentPlayerIndex).getPlace() + result;
+        if (newPlace > PLACES_SIZE) newPlace -= (PLACES_SIZE + 1);
+        players.get(currentPlayerIndex).setPlace(newPlace);
     }
 
     private void askQuestion() {
@@ -104,7 +102,7 @@ public class RefactoredGame implements Game {
 
 
     private Category getCurrentCategory() {
-        int playerPlace = places[currentPlayerIndex];
+        int playerPlace = players.get(currentPlayerIndex).getPlace();
         return placesCategories[playerPlace];
     }
 

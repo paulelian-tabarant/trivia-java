@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import static com.adaptionsoft.games.trivia.Category.*;
 
 public class RefactoredGame implements Game {
+    // TODO: set to 12 and adapt code
     public static final int PLACES_SIZE = 11;
     public static final int QUESTIONS_PER_CATEGORY = 50;
     private final Category[] placesCategories = {POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK};
@@ -51,15 +52,15 @@ public class RefactoredGame implements Game {
     }
 
     public void roll(int result) {
-        logger.log(players.get(currentPlayerIndex) + " is the current player");
+        logger.log(getCurrentPlayer() + " is the current player");
         logger.log("They have rolled a " + result);
 
-        if (players.get(currentPlayerIndex).isInPenaltyBox()) {
+        if (getCurrentPlayer().isInPenaltyBox()) {
             if (canPlayerGetOutOfPenaltyBox(result)) {
                 isGettingOutOfPenaltyBox = true;
-                logger.log(players.get(currentPlayerIndex) + " is getting out of the penalty box");
+                logger.log(getCurrentPlayer() + " is getting out of the penalty box");
             } else {
-                logger.log(players.get(currentPlayerIndex) + " is not getting out of the penalty box");
+                logger.log(getCurrentPlayer() + " is not getting out of the penalty box");
                 isGettingOutOfPenaltyBox = false;
                 return;
             }
@@ -67,9 +68,9 @@ public class RefactoredGame implements Game {
 
         movePlayer(result);
 
-        logger.log(players.get(currentPlayerIndex)
+        logger.log(getCurrentPlayer()
                 + "'s new location is "
-                + players.get(currentPlayerIndex).getPlace());
+                + getCurrentPlayer().getPlace());
         logger.log("The category is " + getCurrentCategory());
 
         askQuestion();
@@ -80,9 +81,9 @@ public class RefactoredGame implements Game {
     }
 
     private void movePlayer(int result) {
-        int newPlace = players.get(currentPlayerIndex).getPlace() + result;
+        int newPlace = getCurrentPlayer().getPlace() + result;
         if (newPlace > PLACES_SIZE) newPlace -= (PLACES_SIZE + 1);
-        players.get(currentPlayerIndex).setPlace(newPlace);
+        getCurrentPlayer().setPlace(newPlace);
     }
 
     private void askQuestion() {
@@ -98,25 +99,25 @@ public class RefactoredGame implements Game {
 
 
     private Category getCurrentCategory() {
-        int playerPlace = players.get(currentPlayerIndex).getPlace();
+        int playerPlace = getCurrentPlayer().getPlace();
         return placesCategories[playerPlace];
     }
 
     public boolean wasCorrectlyAnswered() {
-        if (players.get(currentPlayerIndex).isInPenaltyBox() && !isGettingOutOfPenaltyBox) {
+        if (getCurrentPlayer().isInPenaltyBox() && !isGettingOutOfPenaltyBox) {
             nextPlayer();
             return true;
         }
 
-        if (players.get(currentPlayerIndex).isInPenaltyBox())
+        if (getCurrentPlayer().isInPenaltyBox())
             logger.log("Answer was correct!!!!");
         else
             logger.log("Answer was corrent!!!!");
 
-        players.get(currentPlayerIndex).incrementPurse();
-        logger.log(players.get(currentPlayerIndex)
+        getCurrentPlayer().incrementPurse();
+        logger.log(getCurrentPlayer()
                 + " now has "
-                + players.get(currentPlayerIndex).getPurse()
+                + getCurrentPlayer().getPurse()
                 + " Gold Coins.");
 
         nextPlayer();
@@ -124,11 +125,15 @@ public class RefactoredGame implements Game {
         return didPlayerWin();
     }
 
+    private Player getCurrentPlayer() {
+        return players.get(currentPlayerIndex);
+    }
+
 
     public boolean wrongAnswer() {
         logger.log("Question was incorrectly answered");
-        logger.log(players.get(currentPlayerIndex) + " was sent to the penalty box");
-        players.get(currentPlayerIndex).setInPenaltyBox(true);
+        logger.log(getCurrentPlayer() + " was sent to the penalty box");
+        getCurrentPlayer().setInPenaltyBox(true);
 
         nextPlayer();
         return true;
@@ -139,6 +144,6 @@ public class RefactoredGame implements Game {
     }
 
     private boolean didPlayerWin() {
-        return !(players.get(currentPlayerIndex).getPurse() == 6);
+        return !(getCurrentPlayer().getPurse() == 6);
     }
 }

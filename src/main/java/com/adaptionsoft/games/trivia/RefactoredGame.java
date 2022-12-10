@@ -58,9 +58,8 @@ public class RefactoredGame implements Game {
                 isGettingOutOfPenaltyBox = true;
                 logger.log(getCurrentPlayer() + " is getting out of the penalty box");
             } else {
-                logger.log(getCurrentPlayer() + " is not getting out of the penalty box");
                 isGettingOutOfPenaltyBox = false;
-                return;
+                logger.log(getCurrentPlayer() + " is not getting out of the penalty box");
             }
         }
 

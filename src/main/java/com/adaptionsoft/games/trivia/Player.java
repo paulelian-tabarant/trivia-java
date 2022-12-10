@@ -2,13 +2,12 @@ package com.adaptionsoft.games.trivia;
 
 public class Player {
     private final String name;
-    private int purse;
-    private int place;
+    private int purse = 0;
+    private int place = 0;
+    private boolean isInPenaltyBox = false;
 
     public Player(String name) {
         this.name = name;
-        this.place = 0;
-        this.purse = 0;
     }
 
     @Override
@@ -21,4 +20,12 @@ public class Player {
 
     public int getPurse() { return purse; }
     public void incrementPurse() { purse++; }
+
+    public boolean isInPenaltyBox() {
+        return isInPenaltyBox;
+    }
+
+    public void setInPenaltyBox(boolean inPenaltyBox) {
+        isInPenaltyBox = inPenaltyBox;
+    }
 }

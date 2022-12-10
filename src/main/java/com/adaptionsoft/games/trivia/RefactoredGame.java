@@ -11,8 +11,7 @@ public class RefactoredGame implements Game {
     public static final int PLACES_SIZE = 11;
     public static final int QUESTIONS_PER_CATEGORY = 50;
     private final Category[] placesCategories = {POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK};
-    ArrayList<Player> players = new ArrayList<Player>();
-    boolean[] inPenaltyBox = new boolean[6];
+    ArrayList<Player> players = new ArrayList<>();
 
     LinkedList<String> popQuestions = new LinkedList<>();
     LinkedList<String> scienceQuestions = new LinkedList<>();
@@ -41,7 +40,6 @@ public class RefactoredGame implements Game {
 
     public boolean add(String playerName) {
         players.add(new Player(playerName));
-        inPenaltyBox[playersNumber()] = false;
 
         logger.log(playerName + " was added");
         logger.log("They are player number " + players.size());
@@ -56,7 +54,7 @@ public class RefactoredGame implements Game {
         logger.log(players.get(currentPlayerIndex) + " is the current player");
         logger.log("They have rolled a " + result);
 
-        if (inPenaltyBox[currentPlayerIndex]) {
+        if (players.get(currentPlayerIndex).isInPenaltyBox()) {
             if (canPlayerGetOutOfPenaltyBox(result)) {
                 isGettingOutOfPenaltyBox = true;
                 logger.log(players.get(currentPlayerIndex) + " is getting out of the penalty box");
@@ -105,12 +103,12 @@ public class RefactoredGame implements Game {
     }
 
     public boolean wasCorrectlyAnswered() {
-        if (inPenaltyBox[currentPlayerIndex] && !isGettingOutOfPenaltyBox) {
+        if (players.get(currentPlayerIndex).isInPenaltyBox() && !isGettingOutOfPenaltyBox) {
             nextPlayer();
             return true;
         }
 
-        if (inPenaltyBox[currentPlayerIndex])
+        if (players.get(currentPlayerIndex).isInPenaltyBox())
             logger.log("Answer was correct!!!!");
         else
             logger.log("Answer was corrent!!!!");
@@ -130,7 +128,7 @@ public class RefactoredGame implements Game {
     public boolean wrongAnswer() {
         logger.log("Question was incorrectly answered");
         logger.log(players.get(currentPlayerIndex) + " was sent to the penalty box");
-        inPenaltyBox[currentPlayerIndex] = true;
+        players.get(currentPlayerIndex).setInPenaltyBox(true);
 
         nextPlayer();
         return true;

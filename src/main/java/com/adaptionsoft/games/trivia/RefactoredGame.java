@@ -9,6 +9,8 @@ import java.util.Map;
 
 import static com.adaptionsoft.games.trivia.Category.*;
 
+// TODO: might be good to use aspect programming for logs!
+
 public class RefactoredGame implements Game {
     public static final int PLACES_SIZE = 12;
     private static final int QUESTIONS_PER_CATEGORY = 50;
@@ -22,6 +24,7 @@ public class RefactoredGame implements Game {
     Map<Category, LinkedList<Question>> questionDeck = new HashMap<>();
 
     int currentPlayerIndex = 0;
+    // TODO: possible bug to rectify here, would make sense having one boolean per player
     boolean isGettingOutOfPenaltyBox;
 
     private final Logger logger;
@@ -79,6 +82,7 @@ public class RefactoredGame implements Game {
             logger.log("Answer was correct!!!!");
         }
         else {
+            // TODO: possible bug to rectify here
             logger.log("Answer was corrent!!!!");
         }
 

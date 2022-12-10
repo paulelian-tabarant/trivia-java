@@ -12,7 +12,6 @@ public class RefactoredGame implements Game {
     public static final int QUESTIONS_PER_CATEGORY = 50;
     private final Category[] placesCategories = {POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK};
     ArrayList<Player> players = new ArrayList<Player>();
-    int[] purses = new int[6];
     boolean[] inPenaltyBox = new boolean[6];
 
     LinkedList<String> popQuestions = new LinkedList<>();
@@ -42,7 +41,6 @@ public class RefactoredGame implements Game {
 
     public boolean add(String playerName) {
         players.add(new Player(playerName));
-        purses[playersNumber()] = 0;
         inPenaltyBox[playersNumber()] = false;
 
         logger.log(playerName + " was added");
@@ -117,10 +115,10 @@ public class RefactoredGame implements Game {
         else
             logger.log("Answer was corrent!!!!");
 
-        purses[currentPlayerIndex]++;
+        players.get(currentPlayerIndex).incrementPurse();
         logger.log(players.get(currentPlayerIndex)
                 + " now has "
-                + purses[currentPlayerIndex]
+                + players.get(currentPlayerIndex).getPurse()
                 + " Gold Coins.");
 
         nextPlayer();
@@ -143,6 +141,6 @@ public class RefactoredGame implements Game {
     }
 
     private boolean didPlayerWin() {
-        return !(purses[currentPlayerIndex] == 6);
+        return !(players.get(currentPlayerIndex).getPurse() == 6);
     }
 }

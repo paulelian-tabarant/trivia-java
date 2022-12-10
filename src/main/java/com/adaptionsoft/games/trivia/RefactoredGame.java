@@ -9,7 +9,7 @@ import static com.adaptionsoft.games.trivia.Category.*;
 
 public class RefactoredGame implements Game {
     // TODO: set to 12 and adapt code
-    public static final int PLACES_SIZE = 11;
+    public static final int PLACES_SIZE = 12;
     public static final int QUESTIONS_PER_CATEGORY = 50;
     private final Category[] placesCategories = {POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK};
     ArrayList<Player> players = new ArrayList<>();
@@ -68,9 +68,7 @@ public class RefactoredGame implements Game {
 
         movePlayer(result);
 
-        logger.log(getCurrentPlayer()
-                + "'s new location is "
-                + getCurrentPlayer().getPlace());
+        logger.log(getCurrentPlayer() + "'s new location is " + getCurrentPlayer().getPlace());
         logger.log("The category is " + getCurrentCategory());
 
         askQuestion();
@@ -81,9 +79,7 @@ public class RefactoredGame implements Game {
     }
 
     private void movePlayer(int result) {
-        int newPlace = getCurrentPlayer().getPlace() + result;
-        if (newPlace > PLACES_SIZE) newPlace -= (PLACES_SIZE + 1);
-        getCurrentPlayer().setPlace(newPlace);
+        getCurrentPlayer().moveForward(result);
     }
 
     private void askQuestion() {
@@ -115,10 +111,7 @@ public class RefactoredGame implements Game {
             logger.log("Answer was corrent!!!!");
 
         getCurrentPlayer().incrementPurse();
-        logger.log(getCurrentPlayer()
-                + " now has "
-                + getCurrentPlayer().getPurse()
-                + " Gold Coins.");
+        logger.log(getCurrentPlayer() + " now has " + getCurrentPlayer().getPurse() + " Gold Coins.");
 
         nextPlayer();
 
@@ -133,7 +126,7 @@ public class RefactoredGame implements Game {
     public boolean wrongAnswer() {
         logger.log("Question was incorrectly answered");
         logger.log(getCurrentPlayer() + " was sent to the penalty box");
-        getCurrentPlayer().setInPenaltyBox(true);
+        getCurrentPlayer().moveToPenaltyBox();
 
         nextPlayer();
         return true;

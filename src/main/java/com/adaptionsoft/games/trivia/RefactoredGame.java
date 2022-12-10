@@ -9,14 +9,18 @@ import static com.adaptionsoft.games.trivia.Category.*;
 
 public class RefactoredGame implements Game {
     public static final int PLACES_SIZE = 12;
+
+    // TODO: change visibility to private
     public static final int QUESTIONS_PER_CATEGORY = 50;
+
     private final Category[] placesCategories = {POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK};
     ArrayList<Player> players = new ArrayList<>();
 
-    LinkedList<String> popQuestions = new LinkedList<>();
-    LinkedList<String> scienceQuestions = new LinkedList<>();
-    LinkedList<String> sportsQuestions = new LinkedList<>();
-    LinkedList<String> rockQuestions = new LinkedList<>();
+    // TODO: create a question deck and Question object containing a category and a title
+    LinkedList<Question> popQuestions = new LinkedList<>();
+    LinkedList<Question> scienceQuestions = new LinkedList<>();
+    LinkedList<Question> sportsQuestions = new LinkedList<>();
+    LinkedList<Question> rockQuestions = new LinkedList<>();
 
     int currentPlayerIndex = 0;
     boolean isGettingOutOfPenaltyBox;
@@ -25,10 +29,10 @@ public class RefactoredGame implements Game {
 
     public RefactoredGame(Logger logger) {
         for (int questionIndex = 0; questionIndex < QUESTIONS_PER_CATEGORY; questionIndex++) {
-            popQuestions.addLast(createQuestion(POP, questionIndex));
-            scienceQuestions.addLast(createQuestion(SCIENCE, questionIndex));
-            sportsQuestions.addLast(createQuestion(SPORTS, questionIndex));
-            rockQuestions.addLast(createQuestion(ROCK, questionIndex));
+            popQuestions.addLast(new Question(POP, questionIndex));
+            scienceQuestions.addLast(new Question(SCIENCE, questionIndex));
+            sportsQuestions.addLast(new Question(SPORTS, questionIndex));
+            rockQuestions.addLast(new Question(ROCK, questionIndex));
         }
 
         this.logger = logger;
@@ -106,13 +110,13 @@ public class RefactoredGame implements Game {
 
     private void askQuestion() {
         if (getCurrentCategory().equals(POP))
-            logger.log(popQuestions.removeFirst());
+            logger.log(popQuestions.removeFirst().getTitle());
         if (getCurrentCategory().equals(SCIENCE))
-            logger.log(scienceQuestions.removeFirst());
+            logger.log(scienceQuestions.removeFirst().getTitle());
         if (getCurrentCategory().equals(SPORTS))
-            logger.log(sportsQuestions.removeFirst());
+            logger.log(sportsQuestions.removeFirst().getTitle());
         if (getCurrentCategory().equals(ROCK))
-            logger.log(rockQuestions.removeFirst());
+            logger.log(rockQuestions.removeFirst().getTitle());
     }
 
     private Category getCurrentCategory() {

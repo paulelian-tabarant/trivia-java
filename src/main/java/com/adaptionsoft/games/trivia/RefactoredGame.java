@@ -3,24 +3,21 @@ package com.adaptionsoft.games.trivia;
 import com.adaptionsoft.games.trivia.runner.Game;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import static com.adaptionsoft.games.trivia.Category.*;
 
 public class RefactoredGame implements Game {
     public static final int PLACES_SIZE = 12;
 
-    // TODO: change visibility to private
-    public static final int QUESTIONS_PER_CATEGORY = 50;
+    private static final int QUESTIONS_PER_CATEGORY = 50;
 
     private final Category[] placesCategories = {POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK, POP, SCIENCE, SPORTS, ROCK};
     ArrayList<Player> players = new ArrayList<>();
 
-    // TODO: create a question deck and Question object containing a category and a title
-    LinkedList<Question> popQuestions = new LinkedList<>();
-    LinkedList<Question> scienceQuestions = new LinkedList<>();
-    LinkedList<Question> sportsQuestions = new LinkedList<>();
-    LinkedList<Question> rockQuestions = new LinkedList<>();
+    Map<Category, LinkedList<Question>> questionDeck = new HashMap<>();
 
     int currentPlayerIndex = 0;
     boolean isGettingOutOfPenaltyBox;
@@ -28,18 +25,15 @@ public class RefactoredGame implements Game {
     private final Logger logger;
 
     public RefactoredGame(Logger logger) {
+        for (Category category : Category.values())
+            questionDeck.put(category, new LinkedList<>());
         for (int questionIndex = 0; questionIndex < QUESTIONS_PER_CATEGORY; questionIndex++) {
-            popQuestions.addLast(new Question(POP, questionIndex));
-            scienceQuestions.addLast(new Question(SCIENCE, questionIndex));
-            sportsQuestions.addLast(new Question(SPORTS, questionIndex));
-            rockQuestions.addLast(new Question(ROCK, questionIndex));
+            for (Category category : Category.values()) {
+                questionDeck.get(category).add(new Question(category, questionIndex));
+            }
         }
 
         this.logger = logger;
-    }
-
-    public String createQuestion(Category category, int index) {
-        return category + " Question " + index;
     }
 
     public boolean add(String playerName) {
@@ -109,14 +103,8 @@ public class RefactoredGame implements Game {
     }
 
     private void askQuestion() {
-        if (getCurrentCategory().equals(POP))
-            logger.log(popQuestions.removeFirst().getTitle());
-        if (getCurrentCategory().equals(SCIENCE))
-            logger.log(scienceQuestions.removeFirst().getTitle());
-        if (getCurrentCategory().equals(SPORTS))
-            logger.log(sportsQuestions.removeFirst().getTitle());
-        if (getCurrentCategory().equals(ROCK))
-            logger.log(rockQuestions.removeFirst().getTitle());
+        Question question = questionDeck.get(getCurrentCategory()).removeFirst();
+        logger.log(question.getTitle());
     }
 
     private Category getCurrentCategory() {

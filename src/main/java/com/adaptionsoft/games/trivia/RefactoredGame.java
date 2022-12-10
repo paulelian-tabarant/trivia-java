@@ -46,12 +46,12 @@ public class RefactoredGame implements Game {
         return true;
     }
 
-    public void roll(int result) {
+    public void roll(int rollResult) {
         logger.log(getCurrentPlayer() + " is the current player");
-        logger.log("They have rolled a " + result);
+        logger.log("They have rolled a " + rollResult);
 
         if (getCurrentPlayer().isInPenaltyBox()) {
-            if (canPlayerGetOutOfPenaltyBox(result)) {
+            if (canPlayerGetOutOfPenaltyBox(rollResult)) {
                 isGettingOutOfPenaltyBox = true;
                 logger.log(getCurrentPlayer() + " is getting out of the penalty box");
             } else {
@@ -61,7 +61,7 @@ public class RefactoredGame implements Game {
             }
         }
 
-        movePlayer(result);
+        movePlayer(rollResult);
 
         logger.log(getCurrentPlayer() + "'s new location is " + getCurrentPlayer().getPlace());
         logger.log("The category is " + getCurrentCategory());
@@ -69,9 +69,9 @@ public class RefactoredGame implements Game {
         askQuestion();
     }
 
-    public boolean wasCorrectlyAnswered() {
+    public boolean rightAnswer() {
         if (getCurrentPlayer().isInPenaltyBox() && !isGettingOutOfPenaltyBox) {
-            nextPlayer();
+            setTurnToNextPlayer();
             return true;
         }
 
@@ -83,7 +83,7 @@ public class RefactoredGame implements Game {
         getCurrentPlayer().incrementPurse();
         logger.log(getCurrentPlayer() + " now has " + getCurrentPlayer().getPurse() + " Gold Coins.");
 
-        nextPlayer();
+        setTurnToNextPlayer();
         return getCurrentPlayer().didWin();
     }
 
@@ -92,16 +92,16 @@ public class RefactoredGame implements Game {
         logger.log(getCurrentPlayer() + " was sent to the penalty box");
         getCurrentPlayer().moveToPenaltyBox();
 
-        nextPlayer();
+        setTurnToNextPlayer();
         return true;
     }
 
-    private boolean canPlayerGetOutOfPenaltyBox(int result) {
-        return result % 2 != 0;
+    private boolean canPlayerGetOutOfPenaltyBox(int rollResult) {
+        return rollResult % 2 != 0;
     }
 
-    private void movePlayer(int result) {
-        getCurrentPlayer().moveForward(result);
+    private void movePlayer(int rollResult) {
+        getCurrentPlayer().moveForward(rollResult);
     }
 
     private void askQuestion() {
@@ -120,7 +120,7 @@ public class RefactoredGame implements Game {
         return placesCategories[playerPlace];
     }
 
-    private int playersNumber() {
+    private int countPlayers() {
         return players.size();
     }
 
@@ -128,7 +128,7 @@ public class RefactoredGame implements Game {
         return players.get(currentPlayerIndex);
     }
 
-    private void nextPlayer() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % playersNumber();
+    private void setTurnToNextPlayer() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % countPlayers();
     }
 }

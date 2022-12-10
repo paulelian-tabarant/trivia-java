@@ -131,7 +131,7 @@ public class LegacyGame implements Game {
 		return "Rock";
 	}
 
-	public boolean wasCorrectlyAnswered() {
+	public boolean rightAnswer() {
 		if (inPenaltyBox[currentPlayer]){
 			if (isGettingOutOfPenaltyBox) {
 				logger.log("Answer was correct!!!!");

@@ -20,7 +20,7 @@ public class RefactoredTriviaTest {
         for (int roll = 0; roll < 100; roll++) {
             game.roll(roll % 9);
             if (roll % 2 == 0) game.wrongAnswer();
-            else game.wasCorrectlyAnswered();
+            else game.rightAnswer();
         }
     }
 
